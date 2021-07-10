@@ -3,6 +3,7 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const jwtKey = process.env.jwtKey;
+const jwtExpires = process.env.jwtExpires;
 
 const userSchema = new Schema({
   username: {
@@ -21,9 +22,15 @@ const userSchema = new Schema({
     minlength: 8,
   },
 });
+
 userSchema.methods.generateAuthToken = function () {
-  return jwt.sign({ _id: this._id }, jwtKey);
+  return jwt.sign({ _id: this._id }, jwtKey, { expiresIn: jwtExpires });
 };
+
+userSchema.methods.generateRefreshToken = function () {
+  return jwt.sign({ _id: this._id }, jwtKey, { expiresIn: 31536000 });
+};
+
 userSchema.methods.comparePwd = async function (pwd) {
   return await bcrypt.compare(pwd, this.password);
 };

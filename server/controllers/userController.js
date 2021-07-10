@@ -1,5 +1,12 @@
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
+const env = process.env.NODE_ENV;
+const jwtExpires = process.env.jwtExpires;
+const cookieOptions = {
+  expires: new Date(Date.now() + jwtExpires),
+  secure: env !== "dev",
+  httpOnly: env !== "dev",
+};
 
 exports.signup = async (req, res) => {
   try {
@@ -17,14 +24,20 @@ exports.signup = async (req, res) => {
     ///////////////saving user
     const result = await user.save();
 
-    if (result)
+    if (result) {
+      //sending token in a cookie
+      res.cookie("token", user.generateAuthToken(), cookieOptions);
+      res.cookie("refreshToken", user.generateRefreshToken(), cookieOptions);
+
       return res.status(201).json({
         user: { ...result._doc, password: undefined },
       });
+    }
   } catch (e) {
     return res.status(400).json({ error: e.message });
   }
 };
+
 
 exports.login = async (req, res) => {
   try {
@@ -39,10 +52,14 @@ exports.login = async (req, res) => {
       return res.status(400).json({ error: "Invalid email or password" });
     //generating jwt
     const token = user.generateAuthToken();
+    //sending token in a cookie
+    res.cookie("token", token, cookieOptions);
+    res.cookie("refreshToken", user.generateRefreshToken(), cookieOptions);
 
     return res
       .header("x-auth-token", token)
       .json({ user: { ...user._doc, password: undefined } });
+      
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: e.message });
