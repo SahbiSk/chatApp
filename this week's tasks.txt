@@ -1,8 +1,0 @@
-projet node :
-for this week :
--setup nraka7 auth w login
-w swagger w jwt
--refresh token
------------------------------
-questions i got :
-is the life duration taa cookie fih refresh token howa nafso taa token normal?
