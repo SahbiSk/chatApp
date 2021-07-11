@@ -30,12 +30,14 @@ export default makeStyles((theme) => ({
     alignItems: "center",
   },
   errorAnimation: {
+    position: "absolute",
+    background: "black",
     backgroundImage:
       "url(https://media.tenor.com/images/297db11b9c4c3bd62427beece130897e/tenor.gif)",
-    width: "300px",
-    height: "300px",
-    background: "black",backgroundSize:"contain",
-    backgroundRepeat:"no-repeat"
+    width: "20%",
+    height: "30%",
+    backgroundSize: "contain",
+    backgroundRepeat: "no-repeat",
   },
   form: {
     position: "absolute",
@@ -44,12 +46,25 @@ export default makeStyles((theme) => ({
     transform: "translate(-50%,-50%)",
     display: "flex",
     flexDirection: "column",
-    width: "500px",
     background: "white",
     paddingTop: "3vh",
     minHeight: "63vh",
     borderRadius: "10px",
-    boxShadow: "",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+    width: "34%",
+    "@media(max-width:976px)": {
+      width: "38%",
+    },
+    "@media(max-width:670px)": {
+      width: "55%",
+    },
+    "@media(max-width:470px)": {
+      width: "70%",
+    },
+    "@media(max-width:360px)": {
+      width: "100%",
+      borderRadius: "0",
+    },
   },
   title: {
     background: "var(--color-gradient)",

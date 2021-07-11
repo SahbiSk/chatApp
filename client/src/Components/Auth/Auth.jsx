@@ -63,7 +63,7 @@ const Auth = ({ history }) => {
     e.preventDefault();
     const { user, error } = login
       ? await Login(data)
-      : await signup({ image, ...data });
+      : await signup({image, ...data});
     if (user) return history.push("/chat");
     setError(error);
   };
@@ -80,7 +80,7 @@ const Auth = ({ history }) => {
         </div>
       )}
       <div className={classes.bgOverlay} />
-      <div className={classes.errorAnimation} />
+      {/* <div className={classes.errorAnimation} /> */}
       <Container
         component="form"
         className={classes.form}
