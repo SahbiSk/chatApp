@@ -1,11 +1,18 @@
-import React, { useState } from "react";
-import { Button, Container, TextField, Typography } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Container,
+  TextField,
+  Typography,
+  IconButton,
+} from "@material-ui/core";
 import useStyles from "./styles";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import PersonIcon from "@material-ui/icons/Person";
 import EmailIcon from "@material-ui/icons/Email";
 import { Login, signup } from "../../utils/Api";
+import PhotoCameraIcon from "@material-ui/icons/PhotoCamera";
 
 const Auth = ({ history }) => {
   const [data, setData] = useState({
@@ -15,7 +22,8 @@ const Auth = ({ history }) => {
   });
   const [login, setLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  
+  const [image, setImage] = useState();
+  const [error, setError] = useState();
   const handleChange = (e) =>
     setData({ ...data, [e.target.name]: e.target.value });
   const helperText = !login
@@ -53,16 +61,26 @@ const Auth = ({ history }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = login ? await Login(data) : await signup(data);
-    console.log(!!user);
-    if (!!user) {
-      console.log(user);
-      return history.push("/chat");
-    }
+    const { user, error } = login
+      ? await Login(data)
+      : await signup({ image, ...data });
+    if (user) return history.push("/chat");
+    setError(error);
   };
+
+  useEffect(() => {
+    setTimeout(() => setError(null), 4000);
+  }, [error]);
 
   return (
     <div className={classes.mainContainer}>
+      {error && (
+        <div className={classes.error}>
+          <Typography variant="h6">{error}!</Typography>
+        </div>
+      )}
+      <div className={classes.bgOverlay} />
+      <div className={classes.errorAnimation} />
       <Container
         component="form"
         className={classes.form}
@@ -89,6 +107,24 @@ const Auth = ({ history }) => {
             InputProps={{ endAdornment: fieldsIconGenerator(el) }}
           />
         ))}
+        {!login && (
+          <div className={classes.avatarUpload}>
+            <Typography color="textSecondary">
+              Please Select your avatar
+            </Typography>
+            <IconButton component="label" size="small">
+              <input
+                type="file"
+                hidden
+                required
+                name="avatar"
+                multiple={false}
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+              <PhotoCameraIcon />
+            </IconButton>
+          </div>
+        )}
         <Button type="submit" className={classes.btn}>
           <Typography> {login ? "Login" : "Signup"}</Typography>
         </Button>
